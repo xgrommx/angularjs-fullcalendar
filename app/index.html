@@ -1,0 +1,99 @@
+<!doctype html>
+<html ng-app="calendarApp">
+    <head>
+    
+        <link rel="stylesheet" href="lib/fullcalendar/fullcalendar.css">
+        <link rel="stylesheet" href="lib/foundation-4.2.3/css/foundation.min.css">
+
+        <script type="text/javascript" src="lib/jquery/jquery.js"></script>
+        <script type="text/javascript" src="lib/jquery-ui/ui/jquery-ui.js"></script>
+        <script type="text/javascript" src="lib/angular/angular.js"></script>
+        <script type="text/javascript" src="lib/jqlite-1.1.1/jqlite.1.1.1.js"></script>
+        <script type="text/javascript" src="lib/fullcalendar/fullcalendar.js"></script>
+        <script type="text/javascript" src="lib/fullcalendar/gcal.js"></script>
+        <script type="text/javascript" src="lib/angular-ui-calendar/src/calendar.js"></script>
+        <script type="text/javascript" src="lib/foundation-4.2.3/js/foundation.min.js"></script>
+		
+    </head>
+    <body ng-controller="MainController">
+        <!--Header-->
+        <nav class="top-bar">
+            <ul class="title-area">
+                <!-- Title Area -->
+                <li class="name">
+                    <h1><a>Home</a></h1>
+                </li> 
+            </ul>
+            <section class="top-bar-section">
+                <!-- Left Nav Section -->
+                <ul class="left">
+                    <li class="divider"></li>
+                    <li class="active"><a ng-click="openCalendar('calendar')">Calendar</a></li>
+                    <li class="divider"></li>
+                    <li><a>Map</a></li>
+                    <li class="divider"></li>
+                </ul>
+
+                <!-- Right Nav Section -->
+                <ul class="right">
+                    <li class="divider"></li>
+                        <li class="has-form">
+                            <form>
+                                <div class="row collapse">
+                                    <div class="small-8 columns">
+                                    <input type="text">
+                                </div>
+                                <div class="small-4 columns">
+                                    <a class="alert button">Search</a>
+                                </div>
+                                </div>
+                            </form>
+                         </li>
+                    <li class="divider show-for-small"></li>
+                    <li class="has-form">
+                        <a class="button" ng-click="logoutButton()">Logout</a>
+                    </li>
+                </ul>
+            </section>
+        </nav>
+        <!--//Header-->
+
+        <!--Content-->
+        <div class="content">
+            <!--Placeholder for views-->
+            <div ng-view=""></div>
+        </div>
+        <!--//Content-->
+
+        <!--foundation modal-->
+        <div id="myModal" class="reveal-modal">
+            <form>
+                <fieldset>
+                    <legend>Add event</legend>
+                    <input type="text" id="date" newEvent.start/>
+                    <input type="text" placeholder="Input Title" ng-model="newEvent.title"/>
+                    <input type="text" id="address" placeholder="Input address"/>
+                    <a href="#" class="button secondary">Cancel</a>
+                    <a href="#" id="send" class="button success">Send</a>
+                </fieldset>
+            </form>
+            <a class="close-reveal-modal">&#215;</a>
+        </div>
+        <!--//foundation modal-->
+
+        <!--application-->
+        <script type="text/javascript" src="js/app.js"></script>
+        <!--controllers-->
+        <script type="text/javascript" src="js/controllers/LoginController.js"></script>
+        <script type="text/javascript" src="js/controllers/CalendarController.js"></script>
+        <script type="text/javascript" src="js/controllers/MainController.js"></script>
+        <script type="text/javascript" src="js/controllers/HomeController.js"></script>
+        <script type="text/javascript" src="js/controllers/LogoutController.js"></script>
+        <script type="text/javascript" src="js/controllers/AddEventController.js"></script>
+        <!--factories-->
+        <script type="text/javascript" src="js/factories/eventsFactory.js"></script>
+        <script type="text/javascript" src="js/factories/AuthenticationService.js"></script>
+        <!--custom directives-->
+        <script type="text/javascript" src="js/directives/focus.js"></script>
+    </body>
+</html>
