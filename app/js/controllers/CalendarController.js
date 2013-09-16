@@ -4,51 +4,43 @@ var d = date.getDate();
 var m = date.getMonth();
 var y = date.getFullYear();
 
-myCalendar.controller('CalendarController', ['$scope', 'eventsFactory', function($scope, eventsFactory) {// factory injected into controller at runtime
+myCalendar.controller('CalendarController', ['$scope', '$location', 'eventsFactory', function($scope, $location, eventsFactory) {// factory injected into controller at runtime
     /* event source that pulls from google.com */
     $scope.eventSource = {
         url: "http://www.google.com/calendar/feeds/usa__en%40holiday.calendar.google.com/public/basic",
         className: 'gcal-event',           // an option!
-        currentTimezone: 'America/Chicago' // an option!
+        currentTimezone: 'America/Chicago', // an option!
+        error: function() {
+            alert('there was an error while fetching events!');
+        }
     };
 
     /* event source that contains custom events on the scope */
     $scope.events = eventsFactory.getEvents();
-
-    $scope.init = function() {
-        eventsFactory.getEvents();
-    };
-
 
     /* event source that calls a function on every view switch */
     $scope.eventsF = function (start, end, callback) {
         var s = new Date(start).getTime() / 1000;
         var e = new Date(end).getTime() / 1000;
         var m = new Date(start).getMonth();
-        var events = [{title: 'Feed Me ' + m,start: s + (50000),end: s + (100000),allDay: false, className: ['customFeed']}];
+        var events = [
+            {
+                title: 'Feed Me ' + m,
+                start: s + (50000),
+                end: s + (100000),
+                allDay: false, 
+                className: ['customFeed']
+            }
+        ];    
         callback(events);
     };
+
     /* alert on eventClick */
-    $scope.dayClick = function( date, allDay, jsEvent, view) {
+    /*$scope.dayClick = function(date, allDay, jsEvent, view) {
         $scope.$apply(function() {
-            
-            /*eventsFactory.addEvents();*/
-            $('#myModal').foundation('reveal', 'open');
-            $('#date').val(date);
-            $('#send').click(function() {
-                $scope.events.push({
-                title: $scope.newEvent.title, 
-                start: $scope.newEvent.start
-            });
-            console.log($scope.events);    
-            $('#myModal').foundation('reveal', 'close');
-            });
-            $('a.close-reveal-modal').click(function() {
-                $('#myModal').foundation('reveal', 'close');
-            });
-            
+            $scope.addEvent(date);  
         });
-    };
+    };*/
     /* alert on Drop */
      $scope.alertOnDrop = function(event, dayDelta, minuteDelta, allDay, revertFunc, jsEvent, ui, view) {
         $scope.$apply(function() {
@@ -74,37 +66,96 @@ myCalendar.controller('CalendarController', ['$scope', 'eventsFactory', function
             sources.push(source);
         }
     };
+
+    $scope.backtoCalendar = function(route) {
+        $location.path('/calendar');
+    };
     /* add custom event*/
-    $scope.addEvent = function() {
+    $scope.select = function(start, end, allDay, calendar) {
+        $('#startDate').val(new Date(start));
+        $('#endDate').val(new Date(end));
+        $('#myModal').foundation('reveal', 'open');
+        $('#eventTitle').val('');
+
+        $('#sendAdd').click(function() {
         $scope.events.push({
-            title: 'Open Sesame',
-            start: new Date(y, m, 28),
-            end: new Date(y, m, 29),
+            title: $scope.newEvent.title,
+            start: start,
+            end: end,
+            /*end: new Date(y, m, 29),*/
+            allDay: false,
             className: ['openSesame']
+        }); 
+        
+        $scope.renderEvent = function (event) {
+            var eventObject = {
+                title: $scope.newEvent.title,
+                start: start,
+                end: end,
+                allDay: false,
+            };
+            $scope.myCalendar.fullCalendar('renderEvent', eventObject);
+            return eventObject;
+        };
+        $scope.renderEvent(event);    
+        $('#myModal').foundation('reveal', 'close');
+        $scope.backtoCalendar('calendar');
+        });
+
+        $('a.close-reveal-modal').click(function() {
+            $('#myModal').foundation('reveal', 'close');
+        });
+        $('#cancelAdd').click(function() {
+            $(this).foundation('reveal', 'close');
         });
     };
+    
+    /* event clicked */
+    $scope.eventClick = function(event, jsEvent, view) {
+        $('#editModal').foundation('reveal', 'open');
+
+        $('#editTitle').val(event.title);
+        $('#editDate').html('');
+        $('#editDate').val(event.start);
+        $('a.close-reveal-modal').click(function() {
+            $('#myModal').foundation('reveal', 'close');
+        });
+        $('#editSend').click(function() {
+            $(this).foundation('reveal', 'close');
+        });
+        $('#editCancel').click(function() {
+            $(this).foundation('reveal', 'close');
+        });
+        $('#editDelete').click(function() {
+            $(this).foundation('reveal', 'close');
+        });    
+    };
+
     /* remove event */
     $scope.remove = function(index) {
         $scope.events.splice(index,1);
     };
+
     /* Change View */
-    $scope.changeView = function(view,calendar) {
-        calendar.fullCalendar('changeView',view);
+    $scope.changeView = function(view, calendar) {
+        myCalendar.fullCalendar('changeView',view);
     };
     /* config object */
     $scope.uiConfig = {
         calendar:{
             height: 530,
             editable: true,
+            selectable: true,
             header:{
                 left: 'prev, next, today',
                 center: 'title',
                 right: 'month, agendaWeek, agendaDay'
             },
+            select: $scope.select,
             dayClick: $scope.dayClick,
             eventDrop: $scope.alertOnDrop,
             eventResize: $scope.alertOnResize,
-            eventClick: $scope.dayClick
+            eventClick: $scope.eventClick
         }
     };
     /* event sources array*/
