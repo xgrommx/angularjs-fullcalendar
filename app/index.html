@@ -1,7 +1,7 @@
 <!doctype html>
 <html ng-app="calendarApp">
     <head>
-    
+        <title>Angular Mess</title>
         <link rel="stylesheet" href="lib/fullcalendar/fullcalendar.css">
         <link rel="stylesheet" href="lib/foundation-4.2.3/css/foundation.min.css">
 
@@ -18,19 +18,14 @@
     <body ng-controller="MainController">
         <!--Header-->
         <nav class="top-bar">
-            <ul class="title-area">
-                <!-- Title Area -->
-                <li class="name">
-                    <h1><a>Home</a></h1>
-                </li> 
-            </ul>
             <section class="top-bar-section">
                 <!-- Left Nav Section -->
                 <ul class="left">
+                    <li class="name"><a ng-click="openHome('home')">{{ homeTab }}</a></li>
                     <li class="divider"></li>
-                    <li class="active"><a ng-click="openCalendar('calendar')">Calendar</a></li>
+                    <li class="active"><a ng-click="openCalendar('calendar')">{{ calendarTab }}</a></li>
                     <li class="divider"></li>
-                    <li><a>Map</a></li>
+                    <li><a>{{ mapTab }}</a></li>
                     <li class="divider"></li>
                 </ul>
 
@@ -44,14 +39,14 @@
                                     <input type="text">
                                 </div>
                                 <div class="small-4 columns">
-                                    <a class="alert button">Search</a>
+                                    <a class="alert button">{{ searchTab }}</a>
                                 </div>
                                 </div>
                             </form>
                          </li>
                     <li class="divider show-for-small"></li>
                     <li class="has-form">
-                        <a class="button" ng-click="logoutButton()">Logout</a>
+                        <a class="button" ng-click="logoutButton('logout')">{{ logoutTab }}</a>
                     </li>
                 </ul>
             </section>
@@ -69,12 +64,28 @@
         <div id="myModal" class="reveal-modal">
             <form>
                 <fieldset>
-                    <legend>Add event</legend>
-                    <input type="text" id="date" newEvent.start/>
-                    <input type="text" placeholder="Input Title" ng-model="newEvent.title"/>
+                    <legend>{{ addEvent }}</legend>
+                    <input type="text" id="startDate" newEvent.start/>
+                    <input type="text" id="endDate" newEvent.end/>
+                    <input type="text" id="eventTitle" placeholder="Input Title" ng-model="newEvent.title"/>
                     <input type="text" id="address" placeholder="Input address"/>
-                    <a href="#" class="button secondary">Cancel</a>
-                    <a href="#" id="send" class="button success">Send</a>
+                    <a id= "cancelAdd" class="button secondary">{{ cancelBtn }}</a>
+                    <a id="sendAdd" class="button success">{{ sendBtn }}</a>
+                </fieldset>
+            </form>
+            <a class="close-reveal-modal">&#215;</a>
+        </div>
+
+        <div id="editModal" class="reveal-modal">
+            <form>
+                <fieldset>
+                    <legend>{{ editEvent }}</legend>
+                    <input type="text" id="editDate" newEvent.start/>
+                    <input type="text" id="editTitle" placeholder="Input Title" ng-model="newEvent.title"/>
+                    <input type="text" id="editAddress" placeholder="Input address"/>
+                    <a id ="editCancel" class="button secondary">{{ cancelBtn }}</a>
+                    <a id="editSend" class="button success">{{ sendBtn }}</a>
+                    <a id="editDelete" class="button" ng-click="remove($index)">{{ deleteBtn }}</a>
                 </fieldset>
             </form>
             <a class="close-reveal-modal">&#215;</a>
