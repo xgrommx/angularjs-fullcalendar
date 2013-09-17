@@ -136,7 +136,8 @@ myCalendar.controller('CalendarController', ['$scope', '$location', 'eventsFacto
         $('#editCancel').click(function() {
             $(this).foundation('reveal', 'close');
         });
-        $('#editDelete').click(function() {console.log(event.id)
+        $('#editDelete').click(function() {
+            console.log(event.id); //just to make sure the right id
             $scope.myCalendar.fullCalendar('removeEvents', event.id);
             $scope.myCalendar.fullCalendar('refetchEvents');
             $(this).foundation('reveal', 'close');
