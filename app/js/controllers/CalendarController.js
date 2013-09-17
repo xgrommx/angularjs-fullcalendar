@@ -54,7 +54,7 @@ myCalendar.controller('CalendarController', ['$scope', '$location', 'eventsFacto
         });
     };
     /* add and removes an event source of choice */
-    $scope.addRemoveEventSource = function(sources,source) {
+    $scope.addRemoveEventSource = function(sources, source) {
       var canAdd = 0;
       angular.forEach(sources,function(value, key){
         if(sources[key] === source) {
@@ -71,33 +71,39 @@ myCalendar.controller('CalendarController', ['$scope', '$location', 'eventsFacto
         $location.path('/calendar');
     };
     /* add custom event*/
-    $scope.select = function(start, end, allDay, calendar) {
+    $scope.select = function(start, end, allDay) {
+        //modal renders and initialize
+        $('#myModal').foundation('reveal', 'open');
         $('#startDate').val(new Date(start));
         $('#endDate').val(new Date(end));
-        $('#myModal').foundation('reveal', 'open');
         $('#eventTitle').val('');
 
+        //buttons
         $('#sendAdd').click(function() {
         $scope.events.push({
             title: $scope.newEvent.title,
             start: start,
             end: end,
-            /*end: new Date(y, m, 29),*/
-            allDay: false,
-            className: ['openSesame']
+            allDay: false
         }); 
         
+        //render created events
         $scope.renderEvent = function (event) {
             var eventObject = {
                 title: $scope.newEvent.title,
                 start: start,
                 end: end,
-                allDay: false,
+                allDay: false
             };
-            $scope.myCalendar.fullCalendar('renderEvent', eventObject);
+            $scope.myCalendar.fullCalendar('renderEvent', eventObject, true);
             return eventObject;
+            $scope.myCalendar.fullCalendar('unselect');
         };
-        $scope.renderEvent(event);    
+
+        //call render function
+        $scope.renderEvent(event);
+
+        //buttons    
         $('#myModal').foundation('reveal', 'close');
         $scope.backtoCalendar('calendar');
         });
@@ -108,15 +114,19 @@ myCalendar.controller('CalendarController', ['$scope', '$location', 'eventsFacto
         $('#cancelAdd').click(function() {
             $(this).foundation('reveal', 'close');
         });
+        return;
     };
     
     /* event clicked */
     $scope.eventClick = function(event, jsEvent, view) {
+        //modal render
         $('#editModal').foundation('reveal', 'open');
-
+        //initialization
         $('#editTitle').val(event.title);
         $('#editDate').html('');
         $('#editDate').val(event.start);
+
+        //buttons
         $('a.close-reveal-modal').click(function() {
             $('#myModal').foundation('reveal', 'close');
         });
@@ -126,7 +136,9 @@ myCalendar.controller('CalendarController', ['$scope', '$location', 'eventsFacto
         $('#editCancel').click(function() {
             $(this).foundation('reveal', 'close');
         });
-        $('#editDelete').click(function() {
+        $('#editDelete').click(function() {console.log(event.id)
+            $scope.myCalendar.fullCalendar('removeEvents', event.id);
+            $scope.myCalendar.fullCalendar('refetchEvents');
             $(this).foundation('reveal', 'close');
         });    
     };
@@ -134,6 +146,11 @@ myCalendar.controller('CalendarController', ['$scope', '$location', 'eventsFacto
     /* remove event */
     $scope.remove = function(index) {
         $scope.events.splice(index,1);
+    };
+
+    /* remove event */
+    $scope.removeEvents = function(event) {
+        myCalendar.fullCalendar('removeEvents', event.id);
     };
 
     /* Change View */
@@ -152,7 +169,6 @@ myCalendar.controller('CalendarController', ['$scope', '$location', 'eventsFacto
                 right: 'month, agendaWeek, agendaDay'
             },
             select: $scope.select,
-            dayClick: $scope.dayClick,
             eventDrop: $scope.alertOnDrop,
             eventResize: $scope.alertOnResize,
             eventClick: $scope.eventClick
